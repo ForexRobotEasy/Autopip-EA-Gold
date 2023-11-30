@@ -1,0 +1,80 @@
+
+// Autopip EA Gold
+// Developer's Site: forexroboteasy.com
+// Development by: Forex Robot Easy Team
+
+// Include necessary libraries
+#include <Trade\Trade.mqh>
+#include <Indicators\Indicator.mqh>
+#include <News\NewsFilter.mqh>
+
+// Declare global variables
+CTrade trade;
+CIndicator indicator;
+CNewsFilter newsFilter;
+
+// Define the entry point of the program
+int OnInit()
+{
+    // Initialize trade functionality
+    trade.Init();
+
+    // Initialize indicator functionality
+    indicator.Init();
+
+    // Initialize news filter functionality
+    newsFilter.Init();
+
+    return(INIT_SUCCEEDED);
+}
+
+// Define the main loop of the program
+void OnTick()
+{
+    // Check for any new economic events or news updates
+    if (newsFilter.CheckNewsUpdates())
+    {
+        // Perform necessary actions based on the news updates
+        // (e.g., adjust trading strategy, close open trades, etc.)
+        // ...
+
+        // Update indicator parameters based on the news updates
+        indicator.UpdateParameters();
+
+        // Perform technical analysis using the updated indicators
+        indicator.Analyze();
+
+        // Check if there is a valid trading signal
+        if (indicator.HasValidSignal())
+        {
+            // Determine the trading instrument based on the signal
+            string symbol = indicator.GetTradingSymbol();
+
+            // Determine the trade direction based on the signal
+            ENUM_ORDER_TYPE orderType = indicator.GetTradeDirection();
+
+            // Determine the entry price based on the signal
+            double entryPrice = indicator.GetEntryPrice();
+
+            // Determine the stop-loss and take-profit levels based on the signal
+            double stopLoss = indicator.GetStopLoss();
+            double takeProfit = indicator.GetTakeProfit();
+
+            // Open a new trade based on the trading signal
+            trade.OpenTrade(symbol, orderType, entryPrice, stopLoss, takeProfit);
+        }
+    }
+}
+
+// Define the cleanup function of the program
+void OnDeinit(const int reason)
+{
+    // Cleanup trade functionality
+    trade.Cleanup();
+
+    // Cleanup indicator functionality
+    indicator.Cleanup();
+
+    // Cleanup news filter functionality
+    newsFilter.Cleanup();
+}
